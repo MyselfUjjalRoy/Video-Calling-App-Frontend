@@ -6,9 +6,7 @@ import UserFeedPlayer from "../Components/UserFeedPlayer";
 const Room: React.FC = () => {
 
   const { id } = useParams();
-  const  {socket,user,stream }  = useContext(SocketContext);
-
-   
+  const  {socket,user,stream,peers }  = useContext(SocketContext);
 
   useEffect(() => {
     // emitting this event so that either creator of room or joinee in the room
@@ -19,12 +17,24 @@ const Room: React.FC = () => {
       socket.emit("joined-room", { roomId: id, peerId: user._id});
     }
 
-  }, [id,user,socket]);
+    console.log(peers);
+  }, [id,user,socket,peers]);
 
   return (
     <div>
       room : {id}
+      <br />
+      Your own user Feed
       <UserFeedPlayer stream={stream}/>
+
+      <div>
+        Other Users Feed
+        {Object.keys(peers).map((peerId) =>(
+          <>
+            <UserFeedPlayer key={peerId} stream={peers[peerId].stream} />
+          </>
+        ))}
+      </div>
     </div>
   );
 }
